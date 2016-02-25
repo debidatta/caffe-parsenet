@@ -899,6 +899,8 @@ const char* UpgradeV1LayerType(const V1LayerParameter_LayerType type) {
     return "ParseOutput";
   case V1LayerParameter_LayerType_PARSE_EVALUATE:
     return "ParseEvaluate";
+  case V1LayerParameter_LayerType_LABEL_DROPOUT:
+    return "LabelDropout";
   case V1LayerParameter_LayerType_POOLING:
     return "Pooling";
   case V1LayerParameter_LayerType_POWER:
