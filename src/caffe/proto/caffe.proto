@@ -270,7 +270,7 @@ message ParamSpec {
 // NOTE
 // Update the next available ID when you add a new LayerParameter field.
 //
-// LayerParameter next available layer-specific ID: 138 (last added: bn_param)
+// LayerParameter next available layer-specific ID: 139 (last added: bn_param)
 message LayerParameter {
   optional string name = 1; // the layer name
   optional string type = 2; // the layer type
@@ -353,6 +353,7 @@ message LayerParameter {
   optional UnPoolingParameter unpooling_param = 133;
   optional TileParameter tile_param = 135;
   optional WindowDataParameter window_data_param = 129;
+  optional LabelDropParameter label_drop_param = 138;
 }
 
 // Message that stores parameters used to apply transformation
@@ -772,6 +773,13 @@ message NormalizeParameter {
   optional float eps = 5 [default = 1e-10];
 }
 
+// Message that stores parameters used by LabelDropOut
+message LabelDropParameter {
+  // for reshape layer
+  optional float drop_neg_ratio = 1 [default = 1];
+  optional float hard_ratio = 2;
+  optional float rand_ratio = 3; 
+}
 // Message that stores parameters used by ParseEvaluateLayer
 message ParseEvaluateParameter {
   // Number of total labels. Must provide.
@@ -825,6 +833,15 @@ message PowerParameter {
 message PythonParameter {
   optional string module = 1;
   optional string layer = 2;
+  // This value is set to the attribute `param_str` of the `PythonLayer` object
+  // in Python before calling the `setup()` method. This could be a number,
+  // string, dictionary in Python dict format, JSON, etc. You may parse this
+  // string in `setup` method and use it in `forward` and `backward`.
+  optional string param_str = 3 [default = ''];
+  // Whether this PythonLayer is shared among worker solvers during data parallelism.
+  // If true, each worker solver sequentially run forward from this layer.
+  // This value should be set true if you are using it as a data layer.
+  optional bool share_in_parallel = 4 [default = false];
 }
 
 // Message that stores parameters used by ReLULayer
@@ -1056,6 +1073,7 @@ message V1LayerParameter {
     IMAGE_DATA = 12;
     INFOGAIN_LOSS = 13;
     INNER_PRODUCT = 14;
+    LABEL_DROPOUT = 43;
     LRN = 15;
     MEMORY_DATA = 29;
     MULTINOMIAL_LOGISTIC_LOSS = 16;
