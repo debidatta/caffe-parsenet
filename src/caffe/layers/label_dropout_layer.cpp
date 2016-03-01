@@ -95,8 +95,7 @@ void LabelDropoutLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom)
 			for(int k = 0; k < mapsize; k ++)
 			{
 				int nowid = i * dim + j * mapsize + k;
-                                //std::cout << label[nowid];
-				if(label[nowid] > 0.01)
+				if(label[nowid] > 0)
 				{
 					mask_data[nowid] = 1;
 					pos_num ++;
@@ -108,7 +107,6 @@ void LabelDropoutLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom)
 					neg_num ++;
 				}
 			}
-                        std::cout << pos_num;
 			int use_neg_num = pos_num * drop_neg_ratio;
 			if(use_neg_num >= neg_num)
 			{
