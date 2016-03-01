@@ -36,7 +36,12 @@ class PythonLayer : public Layer<Dtype> {
   }
   virtual void Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
+    try {
     self_.attr("reshape")(bottom, top);
+    }catch (bp::error_already_set) {
+      PyErr_Print();
+      throw;
+    }
   }
 
   virtual inline bool ShareInParallel() const {
@@ -48,11 +53,22 @@ class PythonLayer : public Layer<Dtype> {
  protected:
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
+    try {
     self_.attr("forward")(bottom, top);
+    }catch (bp::error_already_set) {
+      PyErr_Print();
+      throw;
+    }
+
   }
   virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+    try {
     self_.attr("backward")(top, propagate_down, bottom);
+    }catch (bp::error_already_set) {
+      PyErr_Print();
+      throw;
+    }
   }
 
  private:
