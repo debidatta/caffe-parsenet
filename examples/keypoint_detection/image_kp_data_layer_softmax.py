@@ -24,14 +24,19 @@ class ImageKPDataLayer(caffe.Layer):
         
     def kps_list_to_blob(self, kps):
         """Convert a list of keypoint heatmaps into a network input.
-        Assumes images are already prepared (means subtracted, BGR order, ...).
         """
         max_shape = np.array([kp.shape for kp in kps]).max(axis=0)
         num_images = len(kps)
-        blob = np.zeros((num_images, max_shape[0], max_shape[1], max_shape[2]),
+        num_kps = max_shape[2]
+        blob = np.zeros((num_images, max_shape[0], max_shape[1], 1),
                         dtype=np.float32)
         for i in xrange(num_images):
-            blob[i, 0:kp.shape[0], 0:kp.shape[1], :] = kps[i]
+            tmp_img = np.zeros((max_shape[0], max_shape[1], 1),
+                        dtype=np.float32)
+            for j in xrange(num_kps):
+                kp = kps[i][:,:,j]
+                tmp_img[kp>0] = j+1 
+            blob[i, 0:kp.shape[0], 0:kp.shape[1], :] = tmp_img
         # Move channels (axis 3) to axis 1
         # Axis order will become: (batch elem, channel, height, width)
         channel_swap = (0, 3, 1, 2)
@@ -167,7 +172,7 @@ class ImageKPDataLayer(caffe.Layer):
         # rois blob: holds R regions of interest, each is a 5-tuple
         # (n, x1, y1, x2, y2) specifying an image batch index n and a
         # rectangle (x1, y1, x2, y2)
-        top[1].reshape(1, self._num_keypoints, 640, 480)
+        top[1].reshape(1, 1, 640, 480)
 
         # labels blob: R categorical labels in [0, ..., K] for K foreground
         # classes plus background
