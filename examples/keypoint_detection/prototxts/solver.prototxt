@@ -1,0 +1,17 @@
+net: "prototxts/train_sigmoidcrossentropy_neg_camera.prototxt"
+test_iter: 1
+test_interval: 50001
+display: 10
+average_loss: 20
+lr_policy: "step"
+gamma: 0.1
+stepsize: 20000
+base_lr: 1e-7
+momentum: 0.9
+iter_size: 1
+max_iter: 50000
+weight_decay: 0.0005
+snapshot: 10000
+snapshot_prefix: "/media/dey/debidatd/caffemodels/kp_detection_camera_sc_neg"
+debug_info: false
+random_seed: 1312
